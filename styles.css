@@ -31,6 +31,39 @@
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
+.trial-card {
+  margin: 1rem 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-primary-light);
+}
+.trial-card-content { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.trial-card h2 { margin: 0 0 .25rem; font-size: 1rem; }
+.trial-card p { margin: 0; color: var(--color-text-secondary); }
+.progress-track { display: block; width: min(20rem, 100%); height: .45rem; margin-top: .6rem; overflow: hidden; border-radius: 99px; background: rgba(13, 148, 136, .2); }
+.progress-fill { display: block; height: 100%; border-radius: inherit; background: var(--color-primary); }
+.modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 1rem; background: rgba(15, 23, 42, .55); }
+.modal-backdrop[hidden] { display: none; }
+.modal-card { position: relative; width: min(32rem, 100%); padding: 2rem; border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-lg); }
+.modal-close { position: absolute; top: .75rem; right: .9rem; border: 0; background: transparent; color: var(--color-text-muted); font-size: 1.6rem; cursor: pointer; }
+.modal-title { margin: 0 0 .75rem; }
+.modal-content p { margin-top: 0; }
+.modal-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.25rem; }
+.plan-options { display: grid; gap: .6rem; margin-top: 1rem; }
+.plan-options div { display: flex; justify-content: space-between; gap: 1rem; padding: .75rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.plan-options span { color: var(--color-text-secondary); }
+.checkout-summary { margin-top: -.25rem; color: var(--color-text-secondary); }
+.checkout-form { display: grid; gap: .85rem; margin-top: 1.25rem; }
+.checkout-form label { display: grid; gap: .35rem; font-weight: 600; }
+.checkout-form input { width: 100%; padding: .7rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font: inherit; }
+.checkout-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.checkout-success { margin: 1.5rem 0 0; color: var(--color-primary-hover); font-weight: 600; }
+.reset-demo { display: block; width: fit-content; margin: 1rem auto; color: var(--color-text-muted); font-size: .75rem; }
+@media (max-width: 600px) {
+  .trial-card-content, .plan-options div { align-items: flex-start; flex-direction: column; }
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;

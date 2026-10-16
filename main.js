@@ -20,11 +20,134 @@ const tableSection = $('tableSection');
 const tableBody = $('tableBody');
 const exportBtn = $('exportBtn');
 const status = $('status');
+const trialCard = $('trialCard');
+const limitModal = $('limitModal');
+const checkoutModal = $('checkoutModal');
+const checkoutForm = $('checkoutForm');
 
 const rows = [];
 let selectedFiles = [];
 const fileStatuses = new Map();
 let toastTimer;
+const TRIAL_DAYS = 10;
+const DAILY_LIMIT = 5;
+const STORAGE_KEYS = {
+  start: 'auditExtractor.trialStartDate',
+  lastDay: 'auditExtractor.lastProcessingDate',
+  dailyCount: 'auditExtractor.dailyUsageCount',
+  plan: 'auditExtractor.plan',
+};
+
+// For testing day changes and trial expiry, use ?today=YYYY-MM-DD in the URL.
+function currentDate() {
+  const override = new URLSearchParams(window.location.search).get('today');
+  if (/^\d{4}-\d{2}-\d{2}$/.test(override || '')) {
+    const parsed = new Date(`${override}T00:00:00`);
+    if (!Number.isNaN(parsed.getTime()) && parsed.toISOString().startsWith(override)) return override;
+  }
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
+function dateDifference(start, end) {
+  const startDate = new Date(`${start}T00:00:00`);
+  const endDate = new Date(`${end}T00:00:00`);
+  return Math.floor((endDate - startDate) / 86400000);
+}
+
+function trialState() {
+  const today = currentDate();
+  const plan = localStorage.getItem(STORAGE_KEYS.plan);
+  const start = localStorage.getItem(STORAGE_KEYS.start);
+  const lastDay = localStorage.getItem(STORAGE_KEYS.lastDay);
+  let count = Number(localStorage.getItem(STORAGE_KEYS.dailyCount) || 0);
+  if (lastDay !== today) {
+    count = 0;
+    localStorage.setItem(STORAGE_KEYS.lastDay, today);
+    localStorage.setItem(STORAGE_KEYS.dailyCount, '0');
+  }
+  return { today, plan, start, count, day: start ? dateDifference(start, today) + 1 : 0, ended: Boolean(start && dateDifference(start, today) >= TRIAL_DAYS) };
+}
+
+function updateTrialBanner() {
+  const state = trialState();
+  if (state.plan) {
+    trialCard.classList.add('paid-plan');
+    $('trialTitle').textContent = `${state.plan} plan`;
+    $('trialDetail').textContent = 'Unlimited documents included';
+    $('trialUpgradeBtn').hidden = true;
+    return;
+  }
+  trialCard.classList.remove('paid-plan');
+  $('trialUpgradeBtn').hidden = false;
+  if (!state.start) {
+    $('trialTitle').textContent = 'Free trial: 10 days, 5 documents per day';
+    $('trialDetail').textContent = 'Your trial starts when you successfully process your first PDF.';
+    return;
+  }
+  $('trialTitle').textContent = `Free trial: ${state.count} of ${DAILY_LIMIT} documents used today, day ${Math.min(state.day, TRIAL_DAYS)} of ${TRIAL_DAYS}`;
+  $('trialDetail').innerHTML = `<span class="progress-track"><span class="progress-fill" style="width:${(state.count / DAILY_LIMIT) * 100}%"></span></span>`;
+}
+
+function openLimitModal(kind) {
+  const title = $('limitModalTitle');
+  const content = $('limitModalContent');
+  const actions = $('limitModalActions');
+  actions.replaceChildren();
+  if (kind === 'daily') {
+    title.textContent = "You've used today's 5 free documents.";
+    content.textContent = 'Come back tomorrow, or upgrade for unlimited documents.';
+  } else {
+    title.textContent = 'Your 10-day free trial has ended';
+    content.innerHTML = '<p>Upgrade to keep extracting documents.</p><div class="plan-options"><div><strong>Pro</strong><span>$29/month, unlimited documents</span></div><div><strong>Firm</strong><span>$99/month, team seats</span></div></div>';
+  }
+  ['Pro', 'Firm'].forEach((plan) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'btn btn-primary';
+    button.textContent = `Upgrade to ${plan}`;
+    button.addEventListener('click', () => { closeModals(); openCheckout(plan); });
+    actions.appendChild(button);
+  });
+  limitModal.hidden = false;
+}
+
+function closeModals() {
+  limitModal.hidden = true;
+  checkoutModal.hidden = true;
+}
+
+function openCheckout(plan) {
+  $('checkoutTitle').textContent = `${plan} plan`;
+  $('checkoutSummary').textContent = plan === 'Pro' ? '$29/month · Unlimited documents' : '$99/month · Team seats';
+  checkoutForm.hidden = false;
+  checkoutForm.reset();
+  $('checkoutSuccess').hidden = true;
+  checkoutModal.hidden = false;
+}
+
+function canUpload() {
+  const state = trialState();
+  if (state.plan) return true;
+  if (state.ended) {
+    openLimitModal('ended');
+    return false;
+  }
+  if (state.count >= DAILY_LIMIT) {
+    openLimitModal('daily');
+    return false;
+  }
+  return true;
+}
+
+function recordSuccessfulDocument() {
+  const state = trialState();
+  if (state.plan) return;
+  if (!state.start) localStorage.setItem(STORAGE_KEYS.start, state.today);
+  localStorage.setItem(STORAGE_KEYS.lastDay, state.today);
+  localStorage.setItem(STORAGE_KEYS.dailyCount, String(state.count + 1));
+  updateTrialBanner();
+}
 
 const columns = [
   ['fileName', 'File Name', false],
@@ -65,6 +188,7 @@ function showView(view) {
   landingView.classList.toggle('active', !isTool);
   toolView.classList.toggle('active', isTool);
   navLinks.forEach((link) => link.classList.toggle('active', link.dataset.view === view || (view === 'home' && link.dataset.view === 'home')));
+  if (isTool) updateTrialBanner();
   if (view === 'pricing') {
     landingView.classList.add('active');
     requestAnimationFrame(() => $('pricing')?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
@@ -196,8 +320,23 @@ async function handleFiles(fileList) {
     showStatus('Please choose one or more PDF files.', 'error');
     return;
   }
+  updateTrialBanner();
+  if (!canUpload()) return;
+  let skipped = 0;
   for (const file of files) {
-    if (selectedFiles.some((item) => item.name === file.name && item.size === file.size)) continue;
+    const existingIndex = selectedFiles.findIndex((item) => item.name === file.name && item.size === file.size);
+    if (existingIndex !== -1) {
+      if (fileStatuses.get(fileKey(selectedFiles[existingIndex])) !== 'Skipped') continue;
+      fileStatuses.delete(fileKey(selectedFiles[existingIndex]));
+      selectedFiles.splice(existingIndex, 1);
+    }
+    const state = trialState();
+    if (!state.plan && state.count >= DAILY_LIMIT) {
+      selectedFiles.push(file);
+      fileStatuses.set(fileKey(file), 'Skipped');
+      skipped += 1;
+      continue;
+    }
     selectedFiles.push(file);
     fileStatuses.set(fileKey(file), 'Processing');
     renderFileChips();
@@ -213,6 +352,7 @@ async function handleFiles(fileList) {
         continue;
       }
       rows.push({ fileName: file.name, ...fields });
+      recordSuccessfulDocument();
       fileStatuses.set(fileKey(file), 'Done');
       renderTable();
       renderFileChips();
@@ -223,7 +363,13 @@ async function handleFiles(fileList) {
       showStatus(`Could not extract ${file.name}: ${error.message}`, 'error');
     }
   }
-  if (rows.length) showStatus(`Extracted ${rows.length} document${rows.length === 1 ? '' : 's'}.`, 'success');
+  updateTrialBanner();
+  if (skipped) {
+    renderFileChips();
+    showStatus(`${skipped} file${skipped === 1 ? '' : 's'} were skipped: daily limit of ${DAILY_LIMIT} reached`, 'info');
+  } else if (rows.length) {
+    showStatus(`Extracted ${rows.length} document${rows.length === 1 ? '' : 's'}.`, 'success');
+  }
   fileInput.value = '';
 }
 
@@ -270,16 +416,39 @@ navLinks.forEach((link) => link.addEventListener('click', (event) => {
 }));
 tryItFreeBtn.addEventListener('click', () => showView('tool'));
 seePricingBtn.addEventListener('click', () => showView('pricing'));
-document.querySelectorAll('.pricing-cta').forEach((button) => button.addEventListener('click', () => showView('tool')));
+document.querySelectorAll('.pricing-cta').forEach((button) => button.addEventListener('click', () => {
+  if (button.dataset.plan) openCheckout(button.dataset.plan);
+  else showView('tool');
+}));
 navToggle.addEventListener('click', () => {
   const open = navLinksContainer.classList.toggle('open');
   navToggle.setAttribute('aria-expanded', String(open));
 });
-browseBtn.addEventListener('click', (event) => { event.stopPropagation(); fileInput.click(); });
-uploadDropzone.addEventListener('click', () => fileInput.click());
-uploadDropzone.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); fileInput.click(); } });
+browseBtn.addEventListener('click', (event) => { event.stopPropagation(); if (canUpload()) fileInput.click(); });
+uploadDropzone.addEventListener('click', () => { if (canUpload()) fileInput.click(); });
+uploadDropzone.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); if (canUpload()) fileInput.click(); } });
 fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 ['dragenter', 'dragover'].forEach((eventName) => uploadDropzone.addEventListener(eventName, (event) => { event.preventDefault(); uploadDropzone.classList.add('drag-over'); }));
 ['dragleave', 'drop'].forEach((eventName) => uploadDropzone.addEventListener(eventName, (event) => { event.preventDefault(); uploadDropzone.classList.remove('drag-over'); }));
 uploadDropzone.addEventListener('drop', (event) => handleFiles(event.dataTransfer.files));
 exportBtn.addEventListener('click', exportToExcel);
+document.querySelectorAll('[data-close-modal]').forEach((button) => button.addEventListener('click', closeModals));
+checkoutForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const plan = $('checkoutTitle').textContent.replace(' plan', '');
+  if (!['Pro', 'Firm'].includes(plan)) return;
+  localStorage.setItem(STORAGE_KEYS.plan, plan);
+  checkoutForm.hidden = true;
+  $('checkoutSuccess').textContent = `You're now on the ${plan} plan. Unlimited documents are enabled.`;
+  $('checkoutSuccess').hidden = false;
+  updateTrialBanner();
+  showView('tool');
+});
+$('trialUpgradeBtn').addEventListener('click', () => openCheckout('Pro'));
+$('resetDemoLink').addEventListener('click', (event) => {
+  event.preventDefault();
+  Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
+  updateTrialBanner();
+  showStatus('Demo reset.', 'success');
+});
+updateTrialBanner();

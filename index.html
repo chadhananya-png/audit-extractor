@@ -146,20 +146,20 @@
             </div>
             <div class="pricing-grid">
               <article class="pricing-card">
-                <h3 class="pricing-title">Free</h3><p class="pricing-price">$0</p><p class="pricing-period">for 5 documents</p>
-                <ul class="pricing-features"><li>5 document extractions</li><li>Editable review table</li><li>Excel export</li></ul>
+                <h3 class="pricing-title">Free</h3><p class="pricing-price">$0</p><p class="pricing-period">10-day free trial</p>
+                <ul class="pricing-features"><li>10-day free trial, 5 documents per day</li><li>Editable review table</li><li>Excel export</li></ul>
                 <button type="button" class="btn btn-secondary btn-block pricing-cta" data-action="tool">Try it free</button>
               </article>
               <article class="pricing-card popular">
                 <span class="pricing-badge">Most popular</span>
                 <h3 class="pricing-title">Pro</h3><p class="pricing-price">$29</p><p class="pricing-period">per month</p>
                 <ul class="pricing-features"><li>Unlimited document extraction</li><li>Editable review table</li><li>Excel export</li></ul>
-                <button type="button" class="btn btn-primary btn-block pricing-cta" data-action="tool">Choose Pro</button>
+                <button type="button" class="btn btn-primary btn-block pricing-cta" data-action="tool" data-plan="Pro">Choose Pro</button>
               </article>
               <article class="pricing-card">
                 <h3 class="pricing-title">Firm</h3><p class="pricing-price">$99</p><p class="pricing-period">per month</p>
                 <ul class="pricing-features"><li>Unlimited document extraction</li><li>Team-ready workflows</li><li>Priority support</li></ul>
-                <button type="button" class="btn btn-secondary btn-block pricing-cta" data-action="tool">Choose Firm</button>
+                <button type="button" class="btn btn-secondary btn-block pricing-cta" data-action="tool" data-plan="Firm">Choose Firm</button>
               </article>
             </div>
           </div>
@@ -178,6 +178,10 @@
             </div>
           </header>
           <div class="tool-layout">
+            <section class="trial-card" id="trialCard" aria-live="polite">
+              <div class="trial-card-content"><div><p class="trial-title" id="trialTitle"></p><p class="trial-detail" id="trialDetail"></p></div></div>
+              <button type="button" class="btn btn-primary trial-upgrade" id="trialUpgradeBtn" data-plan="Pro">Upgrade</button>
+            </section>
             <section class="upload-section" aria-labelledby="uploadHeading">
               <div class="upload-card">
                 <h2 id="uploadHeading" class="visually-hidden">Upload PDF files</h2>
@@ -209,6 +213,28 @@
       <div class="container footer-bottom"><p>&copy; 2026 Audit Extractor. Built for careful review.</p></div>
     </footer>
     <div id="status" class="status-toast" hidden role="status" aria-live="polite"></div>
+    <div id="limitModal" class="modal-backdrop" hidden>
+      <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="limitModalTitle">
+        <button type="button" class="modal-close" data-close-modal aria-label="Close">&times;</button>
+        <h2 id="limitModalTitle" class="modal-title"></h2><div id="limitModalContent" class="modal-content"></div>
+        <div class="modal-actions" id="limitModalActions"></div>
+      </section>
+    </div>
+    <div id="checkoutModal" class="modal-backdrop" hidden>
+      <section class="modal-card checkout-card" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+        <button type="button" class="modal-close" data-close-modal aria-label="Close">&times;</button>
+        <p class="eyebrow eyebrow-dark">Demo checkout, no real payment is taken</p>
+        <h2 id="checkoutTitle" class="modal-title">Choose a plan</h2><p id="checkoutSummary" class="checkout-summary"></p>
+        <form id="checkoutForm" class="checkout-form">
+          <label>Name<input name="name" type="text" autocomplete="name" required></label>
+          <label>Card number<input name="cardNumber" type="text" inputmode="numeric" autocomplete="off" required></label>
+          <div class="checkout-row"><label>Expiry<input name="expiry" type="text" placeholder="MM/YY" autocomplete="off" required></label><label>CVC<input name="cvc" type="text" inputmode="numeric" autocomplete="off" required></label></div>
+          <button type="submit" class="btn btn-primary btn-block">Pay</button>
+        </form>
+        <p id="checkoutSuccess" class="checkout-success" hidden></p>
+      </section>
+    </div>
+    <a href="#" id="resetDemoLink" class="reset-demo">Reset demo</a>
     <script type="module" src="/main.js"></script>
   </body>
 </html>
