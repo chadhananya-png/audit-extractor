@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+.env.*
+*.log
+example-com.png
+tool-page.png
+.playwright-mcp

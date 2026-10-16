@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Extract audit-ready data from invoices, sales orders, and purchase orders.">
+    <title>Audit Extractor</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="header-bar">
+      <div class="nav-container">
+        <a class="header-brand" href="#home" data-view="home" aria-label="Audit Extractor home">
+          <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+          <span class="app-title">Audit Extractor</span>
+        </a>
+        <button class="nav-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+          <a class="nav-link active" href="#home" data-view="home">Home</a>
+          <a class="nav-link" href="#tool" data-view="tool">Tool</a>
+          <a class="nav-link" href="#pricing" data-view="pricing">Pricing</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div id="landingView" class="view active">
+        <section class="hero">
+          <div class="container hero-content">
+            <p class="eyebrow">Audit-ready document data</p>
+            <h1 class="hero-title">Turn PDF paperwork into clean, reviewable data.</h1>
+            <p class="hero-subtitle">Extract invoices, sales orders, and purchase orders in seconds. Review every field, make edits, and export an audit-friendly Excel file.</p>
+            <div class="hero-actions">
+              <button type="button" id="tryItFreeBtn" class="btn btn-primary btn-lg">Try it free</button>
+              <button type="button" id="seePricingBtn" class="btn btn-secondary btn-lg">See pricing</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="use-cases" aria-labelledby="useCasesHeading">
+          <div class="container">
+            <div class="section-header">
+              <p class="eyebrow eyebrow-dark">Who it's for</p>
+              <h2 id="useCasesHeading" class="section-title">A faster first pass for every audit team</h2>
+              <p class="section-subtitle">Spend less time transcribing documents and more time following the evidence.</p>
+            </div>
+            <div class="use-cases-grid">
+              <article class="use-case-card">
+                <svg class="use-case-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M3 21h18M5 21V5l7-3 7 3v16M9 9h1M14 9h1M9 13h1M14 13h1M9 17h1M14 17h1"/>
+                </svg>
+                <h3 class="use-case-title">Internal audit teams</h3>
+                <p class="use-case-desc">Create consistent working papers from high-volume operational documents.</p>
+              </article>
+              <article class="use-case-card">
+                <svg class="use-case-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M4 19V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14M4 19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2M4 19h16M8 7h8M8 11h8M8 15h5"/>
+                </svg>
+                <h3 class="use-case-title">Accounting teams</h3>
+                <p class="use-case-desc">Bring structured data into reconciliation and review workflows without rekeying.</p>
+              </article>
+              <article class="use-case-card">
+                <svg class="use-case-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/>
+                </svg>
+                <h3 class="use-case-title">Advisory firms</h3>
+                <p class="use-case-desc">Standardize client deliverables and keep document review moving across engagements.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="how-it-works" aria-labelledby="howHeading">
+          <div class="container">
+            <div class="section-header">
+              <p class="eyebrow eyebrow-dark">How it works</p>
+              <h2 id="howHeading" class="section-title">From PDF to spreadsheet in three steps</h2>
+            </div>
+            <div class="steps-grid">
+              <article class="step-card">
+                <span class="step-number">01</span>
+                <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M12 16V3M7 8l5-5 5 5M5 13v5a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-5"/>
+                </svg>
+                <h3 class="step-title">Upload documents</h3>
+                <p class="step-desc">Drop one or many text-based PDFs into the secure browser tool.</p>
+              </article>
+              <article class="step-card">
+                <span class="step-number">02</span>
+                <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5"/>
+                </svg>
+                <h3 class="step-title">Review extracted fields</h3>
+                <p class="step-desc">Check the structured table, correct anything that needs context, and keep your judgment in the loop.</p>
+              </article>
+              <article class="step-card">
+                <span class="step-number">03</span>
+                <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                  <path d="M5 20h14M12 4v12M7 11l5 5 5-5"/>
+                </svg>
+                <h3 class="step-title">Export to Excel</h3>
+                <p class="step-desc">Download a tidy workbook ready for sampling, reconciliation, and audit documentation.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="benefits" aria-labelledby="benefitsHeading">
+          <div class="container">
+            <div class="section-header">
+              <p class="eyebrow eyebrow-dark">Built for review</p>
+              <h2 id="benefitsHeading" class="section-title">Keep the work accurate and transparent</h2>
+            </div>
+            <ul class="benefits-list">
+              <li class="benefit-item">
+                <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+                <div><h3 class="benefit-title">Your documents stay in your browser</h3><p class="benefit-desc">The tool processes files locally, so you can review the result without sending source documents to a third-party service.</p></div>
+              </li>
+              <li class="benefit-item">
+                <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+                <div><h3 class="benefit-title">Every extracted value remains editable</h3><p class="benefit-desc">Extraction accelerates the first draft; human review remains simple with an editable results table.</p></div>
+              </li>
+              <li class="benefit-item">
+                <svg class="benefit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+                <div><h3 class="benefit-title">A clean handoff to Excel</h3><p class="benefit-desc">Export consistent columns for downstream analysis, testing, and evidence retention.</p></div>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="pricing" id="pricing" aria-labelledby="pricingHeading">
+          <div class="container">
+            <div class="section-header">
+              <p class="eyebrow eyebrow-dark">Pricing</p>
+              <h2 id="pricingHeading" class="section-title">Start small, scale with your workload</h2>
+              <p class="section-subtitle">Choose the plan that fits the number of documents your team reviews.</p>
+            </div>
+            <div class="pricing-grid">
+              <article class="pricing-card">
+                <h3 class="pricing-title">Free</h3><p class="pricing-price">$0</p><p class="pricing-period">for 5 documents</p>
+                <ul class="pricing-features"><li>5 document extractions</li><li>Editable review table</li><li>Excel export</li></ul>
+                <button type="button" class="btn btn-secondary btn-block pricing-cta" data-action="tool">Try it free</button>
+              </article>
+              <article class="pricing-card popular">
+                <span class="pricing-badge">Most popular</span>
+                <h3 class="pricing-title">Pro</h3><p class="pricing-price">$29</p><p class="pricing-period">per month</p>
+                <ul class="pricing-features"><li>Unlimited document extraction</li><li>Editable review table</li><li>Excel export</li></ul>
+                <button type="button" class="btn btn-primary btn-block pricing-cta" data-action="tool">Choose Pro</button>
+              </article>
+              <article class="pricing-card">
+                <h3 class="pricing-title">Firm</h3><p class="pricing-price">$99</p><p class="pricing-period">per month</p>
+                <ul class="pricing-features"><li>Unlimited document extraction</li><li>Team-ready workflows</li><li>Priority support</li></ul>
+                <button type="button" class="btn btn-secondary btn-block pricing-cta" data-action="tool">Choose Firm</button>
+              </article>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="toolView" class="view">
+        <div class="tool-page-container">
+          <header class="tool-header">
+            <div class="tool-header-content">
+              <div class="tool-brand">
+                <svg class="tool-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <div><h1 id="toolHeading" class="tool-title">Audit Extractor</h1><p class="tool-tagline">Upload PDFs, review extracted data, export to Excel</p></div>
+              </div>
+              <div class="header-actions" id="headerActions" hidden><span class="doc-count" id="docCount">0 documents</span><span class="total-amount" id="totalAmount">$0.00 total</span></div>
+            </div>
+          </header>
+          <div class="tool-layout">
+            <section class="upload-section" aria-labelledby="uploadHeading">
+              <div class="upload-card">
+                <h2 id="uploadHeading" class="visually-hidden">Upload PDF files</h2>
+                <input type="file" id="fileInput" accept=".pdf,application/pdf" multiple hidden>
+                <div class="upload-dropzone" id="uploadDropzone" role="button" tabindex="0" aria-label="Drop PDF files here or click to browse">
+                  <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                  <p class="upload-title">Drop PDF files here, or <button type="button" id="browseBtn" class="browse-link">browse</button></p>
+                  <p class="upload-hint">Supports invoices, sales orders, and purchase orders (text-based PDFs)</p>
+                </div>
+                <div id="fileChips" class="file-chips" aria-live="polite"></div>
+              </div>
+            </section>
+            <section class="table-section" id="tableSection" hidden aria-labelledby="tableHeading">
+              <div class="table-header-row"><h2 id="tableHeading" class="table-title">Extracted Data</h2><div class="table-summary" id="tableSummary" aria-live="polite"><span class="summary-item" id="summaryCount">0 documents</span><span class="summary-divider" aria-hidden="true">·</span><span class="summary-item summary-total" id="summaryTotal">$0.00 total</span></div></div>
+              <div class="table-toolbar"><button type="button" id="exportBtn" class="btn btn-export"><svg class="button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export to Excel</button></div>
+              <div class="table-wrapper"><table id="dataTable" role="grid"><thead><tr><th scope="col">File Name</th><th scope="col">Document Type</th><th scope="col">Document Number</th><th scope="col">Reference</th><th scope="col">Date</th><th scope="col">Due Date</th><th scope="col">Seller</th><th scope="col">Buyer</th><th scope="col">Seller Tax ID</th><th scope="col">Buyer Tax ID</th><th scope="col" class="num-col">Subtotal</th><th scope="col" class="num-col">Tax Amount</th><th scope="col" class="num-col">Tax Rate</th><th scope="col" class="num-col">Discount</th><th scope="col" class="num-col">Shipping</th><th scope="col" class="num-col">Total Amount</th><th scope="col">Currency</th><th scope="col">Payment Terms</th><th scope="col">Confidence</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead><tbody id="tableBody"></tbody></table></div>
+              <p id="emptyState" class="empty-state" hidden>No data extracted yet. Upload PDF files to begin.</p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-content">
+        <div class="footer-brand"><h3>Audit Extractor</h3><p>Less transcription. More audit judgment.</p></div>
+        <div class="footer-links"><h4>Explore</h4><a href="#home" data-view="home">Home</a><a href="#tool" data-view="tool">Tool</a><a href="#pricing" data-view="pricing">Pricing</a></div>
+      </div>
+      <div class="container footer-bottom"><p>&copy; 2026 Audit Extractor. Built for careful review.</p></div>
+    </footer>
+    <div id="status" class="status-toast" hidden role="status" aria-live="polite"></div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

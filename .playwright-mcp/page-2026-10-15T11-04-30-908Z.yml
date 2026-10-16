@@ -1,0 +1,44 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "Audit Extractor home" [ref=e4] [cursor=pointer]:
+        - /url: "#home"
+        - generic [ref=e8]: Audit Extractor
+      - navigation "Main navigation" [ref=e9]:
+        - link "Home" [ref=e10] [cursor=pointer]:
+          - /url: "#home"
+        - link "Tool" [active] [ref=e11] [cursor=pointer]:
+          - /url: "#tool"
+        - link "Pricing" [ref=e12] [cursor=pointer]:
+          - /url: "#pricing"
+  - main [ref=e13]:
+    - generic [ref=e141]:
+      - generic [ref=e143]:
+        - generic [ref=e148]:
+          - heading "Audit Extractor" [level=1] [ref=e149]
+          - paragraph [ref=e150]: Upload PDFs, review extracted data, export to Excel
+        - generic [ref=e151]:
+          - generic [ref=e152]: 0 documents
+          - generic [ref=e153]: $0.00 total
+      - region [ref=e155]:
+        - generic [ref=e156]:
+          - heading "Upload PDF files" [level=2] [ref=e157]
+          - button "Drop PDF files here or click to browse" [ref=e158] [cursor=pointer]:
+            - paragraph [ref=e161]:
+              - text: Drop PDF files here, or
+              - button "browse" [ref=e162]
+            - paragraph [ref=e163]: Supports invoices, sales orders, and purchase orders (text-based PDFs)
+  - contentinfo [ref=e128]:
+    - generic [ref=e129]:
+      - generic [ref=e130]:
+        - heading "Audit Extractor" [level=3] [ref=e131]
+        - paragraph [ref=e132]: Less transcription. More audit judgment.
+      - generic [ref=e133]:
+        - heading "Explore" [level=4] [ref=e134]
+        - link "Home" [ref=e135] [cursor=pointer]:
+          - /url: "#home"
+        - link "Tool" [ref=e136] [cursor=pointer]:
+          - /url: "#tool"
+        - link "Pricing" [ref=e137] [cursor=pointer]:
+          - /url: "#pricing"
+    - paragraph [ref=e139]: © 2026 Audit Extractor. Built for careful review.
