@@ -185,10 +185,10 @@
             <section class="upload-section" aria-labelledby="uploadHeading">
               <div class="upload-card">
                 <h2 id="uploadHeading" class="visually-hidden">Upload PDF files</h2>
-                <input type="file" id="fileInput" accept=".pdf,application/pdf" multiple hidden>
-                <div class="upload-dropzone" id="uploadDropzone" role="button" tabindex="0" aria-label="Drop PDF files here or click to browse">
+                <input type="file" id="fileInput" accept="application/pdf,.pdf" multiple hidden>
+                <div class="upload-dropzone" id="uploadDropzone" aria-label="Drop PDF files here">
                   <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                  <p class="upload-title">Drop PDF files here, or <button type="button" id="browseBtn" class="browse-link">browse</button></p>
+                  <p class="upload-title">Drop PDF files here, or <button type="button" id="browseBtn" class="btn btn-primary">Choose PDF files</button></p>
                   <p class="upload-hint">Supports invoices, sales orders, and purchase orders (text-based PDFs)</p>
                 </div>
                 <div id="fileChips" class="file-chips" aria-live="polite"></div>

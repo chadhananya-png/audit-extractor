@@ -131,10 +131,12 @@ function canUpload() {
   if (state.plan) return true;
   if (state.ended) {
     openLimitModal('ended');
+    showStatus('Your free trial has ended. Upgrade to upload more PDFs.', 'error');
     return false;
   }
   if (state.count >= DAILY_LIMIT) {
     openLimitModal('daily');
+    showStatus(`Today's ${DAILY_LIMIT}-document limit has been reached. Upgrade or try again tomorrow.`, 'error');
     return false;
   }
   return true;
@@ -424,9 +426,7 @@ navToggle.addEventListener('click', () => {
   const open = navLinksContainer.classList.toggle('open');
   navToggle.setAttribute('aria-expanded', String(open));
 });
-browseBtn.addEventListener('click', (event) => { event.stopPropagation(); if (canUpload()) fileInput.click(); });
-uploadDropzone.addEventListener('click', () => { if (canUpload()) fileInput.click(); });
-uploadDropzone.addEventListener('keydown', (event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); if (canUpload()) fileInput.click(); } });
+browseBtn.addEventListener('click', () => { if (canUpload()) fileInput.click(); });
 fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 ['dragenter', 'dragover'].forEach((eventName) => uploadDropzone.addEventListener(eventName, (event) => { event.preventDefault(); uploadDropzone.classList.add('drag-over'); }));
 ['dragleave', 'drop'].forEach((eventName) => uploadDropzone.addEventListener(eventName, (event) => { event.preventDefault(); uploadDropzone.classList.remove('drag-over'); }));
