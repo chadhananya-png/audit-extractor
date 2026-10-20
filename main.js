@@ -99,7 +99,7 @@ function openLimitModal(kind) {
     content.textContent = 'Come back tomorrow, or upgrade for unlimited documents.';
   } else {
     title.textContent = 'Your 10-day free trial has ended';
-    content.innerHTML = '<p>Upgrade to keep extracting documents.</p><div class="plan-options"><div><strong>Pro</strong><span>$29/month, unlimited documents</span></div><div><strong>Firm</strong><span>$99/month, team seats</span></div></div>';
+    content.innerHTML = '<p>Upgrade to keep extracting documents.</p><div class="plan-options"><div><strong>Monthly Pro</strong><span>$10/month, unlimited documents</span></div><div><strong>Yearly Pro</strong><span>$60/year ($5/month, billed yearly) · Save 50%</span></div><div><strong>Firm</strong><span>$99/month, team seats</span></div></div>';
   }
   ['Pro', 'Firm'].forEach((plan) => {
     const button = document.createElement('button');
@@ -119,7 +119,7 @@ function closeModals() {
 
 function openCheckout(plan) {
   $('checkoutTitle').textContent = `${plan} plan`;
-  $('checkoutSummary').textContent = plan === 'Pro' ? '$29/month · Unlimited documents' : '$99/month · Team seats';
+  $('checkoutSummary').textContent = plan === 'Pro' ? '$10/month · Unlimited documents' : '$99/month · Team seats';
   checkoutForm.hidden = false;
   checkoutForm.reset();
   $('checkoutSuccess').hidden = true;
