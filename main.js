@@ -85,6 +85,11 @@ function updateTrialBanner() {
     $('trialDetail').textContent = 'Your trial starts when you successfully process your first PDF.';
     return;
   }
+  if (state.ended) {
+    $('trialTitle').textContent = 'Free trial ended';
+    $('trialDetail').textContent = 'Upgrade to keep extracting documents.';
+    return;
+  }
   $('trialTitle').textContent = `Free trial: ${state.count} of ${DAILY_LIMIT} documents used today, day ${Math.min(state.day, TRIAL_DAYS)} of ${TRIAL_DAYS}`;
   $('trialDetail').innerHTML = `<span class="progress-track"><span class="progress-fill" style="width:${(state.count / DAILY_LIMIT) * 100}%"></span></span>`;
 }
