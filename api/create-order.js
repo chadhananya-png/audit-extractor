@@ -7,6 +7,21 @@ function sendJson(res, status, body) {
   res.status(status).json(body);
 }
 
+function diagnostics(keyId, keySecret) {
+  const safeKeyId = keyId || '';
+  const safeKeySecret = keySecret || '';
+  return {
+    keyIdStartsWith: safeKeyId.slice(0, 9),
+    keyIdLength: safeKeyId.length,
+    keySecretLength: safeKeySecret.length,
+    mode: safeKeyId.startsWith('rzp_test_')
+      ? 'test'
+      : safeKeyId.startsWith('rzp_live_')
+        ? 'live'
+        : 'unknown',
+  };
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     sendJson(res, 405, { error: 'Method not allowed. Use POST.' });
@@ -20,10 +35,16 @@ export default async function handler(req, res) {
     return;
   }
 
-  const keyId = process.env.RAZORPAY_KEY_ID;
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
-  if (!keyId || !keySecret) {
-    sendJson(res, 500, { error: 'Razorpay is not configured on the server.' });
+  const keyId = process.env.RAZORPAY_KEY_ID?.trim() || '';
+  const keySecret = process.env.RAZORPAY_KEY_SECRET?.trim() || '';
+  const missingVariables = [];
+  if (!keyId) missingVariables.push('RAZORPAY_KEY_ID');
+  if (!keySecret) missingVariables.push('RAZORPAY_KEY_SECRET');
+  if (missingVariables.length) {
+    sendJson(res, 500, {
+      error: `Missing environment variable${missingVariables.length > 1 ? 's' : ''}: ${missingVariables.join(', ')}.`,
+      diagnostics: diagnostics(keyId, keySecret),
+    });
     return;
   }
 
@@ -43,7 +64,11 @@ export default async function handler(req, res) {
 
     const order = await response.json();
     if (!response.ok) {
-      sendJson(res, response.status, { error: order.error?.description || 'Could not create Razorpay order.' });
+      sendJson(res, response.status, {
+        error: order.error?.description || 'Could not create Razorpay order.',
+        httpStatus: response.status,
+        diagnostics: diagnostics(keyId, keySecret),
+      });
       return;
     }
 
@@ -55,6 +80,9 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Razorpay order creation failed', error);
-    sendJson(res, 502, { error: 'Could not reach Razorpay. Please try again.' });
+    sendJson(res, 502, {
+      error: 'Could not reach Razorpay. Please try again.',
+      diagnostics: diagnostics(keyId, keySecret),
+    });
   }
 }

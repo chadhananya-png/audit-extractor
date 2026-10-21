@@ -186,6 +186,7 @@ async function openCheckout(plan) {
     });
     razorpay.open();
   } catch (error) {
+    checkoutMessage.textContent = error.message;
     checkoutModal.hidden = true;
     showStatus(`Checkout could not start: ${error.message}`, 'error');
   }
