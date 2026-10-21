@@ -19,6 +19,8 @@
   --color-danger: #dc2626;
   --color-danger-hover: #b91c1c;
   --color-danger-light: #fee2e2;
+  --color-warning: #b45309;
+  --color-warning-light: #fef3c7;
   --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-md: 0 4px 8px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
@@ -43,7 +45,7 @@
 .trial-card p { margin: 0; color: var(--color-text-secondary); }
 .progress-track { display: block; width: min(20rem, 100%); height: .45rem; margin-top: .6rem; overflow: hidden; border-radius: 99px; background: rgba(13, 148, 136, .2); }
 .progress-fill { display: block; height: 100%; border-radius: inherit; background: var(--color-primary); }
-.modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 1rem; background: rgba(15, 23, 42, .55); }
+.modal-backdrop { position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 1rem; background: rgba(15, 23, 42, .55); }
 .modal-backdrop[hidden] { display: none; }
 .modal-card { position: relative; width: min(32rem, 100%); padding: 2rem; border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-lg); }
 .modal-close { position: absolute; top: .75rem; right: .9rem; border: 0; background: transparent; color: var(--color-text-muted); font-size: 1.6rem; cursor: pointer; }
@@ -143,6 +145,8 @@ svg {
   display: flex;
   align-items: center;
   gap: 12px;
+  color: white;
+  text-decoration: none;
 }
 
 .header-icon {
@@ -762,6 +766,10 @@ svg {
   color: var(--color-danger);
 }
 
+.file-chip-status-no-text-found {
+  color: var(--color-warning);
+}
+
 .file-chip button {
   background: none;
   border: none;
@@ -981,6 +989,12 @@ svg {
   background: var(--color-primary-light);
   color: var(--color-primary-text);
   border: 1px solid #5eead4;
+}
+
+.status-toast.warning {
+  background: var(--color-warning-light);
+  color: #78350f;
+  border: 1px solid #fbbf24;
 }
 
 /* ===== Responsive ===== */

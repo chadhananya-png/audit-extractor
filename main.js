@@ -119,7 +119,12 @@ function closeModals() {
 
 function openCheckout(plan) {
   $('checkoutTitle').textContent = `${plan} plan`;
-  $('checkoutSummary').textContent = plan === 'Pro' ? '$10/month · Unlimited documents' : '$99/month · Team seats';
+  const summaries = {
+    Pro: '$10/month · Unlimited documents',
+    'Yearly Pro': '$60/year ($5/month, billed yearly) · Unlimited documents',
+    Firm: '$99/month · Team seats',
+  };
+  $('checkoutSummary').textContent = summaries[plan] || '';
   checkoutForm.hidden = false;
   checkoutForm.reset();
   $('checkoutSuccess').hidden = true;
@@ -317,18 +322,28 @@ function renderFileChips() {
 }
 
 async function handleFiles(fileList) {
-  const files = [...fileList].filter((file) => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
+  const allFiles = [...fileList];
+  const files = allFiles.filter((file) => file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
+  const invalidFiles = allFiles.filter((file) => !files.includes(file));
   if (!files.length) {
-    showStatus('Please choose one or more PDF files.', 'error');
+    showStatus('No PDFs selected. Please choose one or more PDF files.', 'error');
     return;
+  }
+  if (invalidFiles.length) {
+    showStatus(`${invalidFiles.length} non-PDF file${invalidFiles.length === 1 ? '' : 's'} ignored. Please choose PDF files only.`, 'error');
   }
   updateTrialBanner();
   if (!canUpload()) return;
   let skipped = 0;
+  let duplicates = 0;
+  let noTextFound = 0;
   for (const file of files) {
     const existingIndex = selectedFiles.findIndex((item) => item.name === file.name && item.size === file.size);
     if (existingIndex !== -1) {
-      if (fileStatuses.get(fileKey(selectedFiles[existingIndex])) !== 'Skipped') continue;
+      if (fileStatuses.get(fileKey(selectedFiles[existingIndex])) !== 'Skipped') {
+        duplicates += 1;
+        continue;
+      }
       fileStatuses.delete(fileKey(selectedFiles[existingIndex]));
       selectedFiles.splice(existingIndex, 1);
     }
@@ -347,9 +362,9 @@ async function handleFiles(fileList) {
       const fields = await extractPdf(file);
       if (fields.noText) {
         const message = 'No text found. This looks like a scanned PDF and is not supported yet.';
-        fileStatuses.set(fileKey(file), message);
-        console.warn(`${file.name}: ${message}`);
-        showStatus(message, 'error');
+        fileStatuses.set(fileKey(file), 'No text found');
+        noTextFound += 1;
+        showStatus(`${file.name}: ${message}`, 'warning');
         renderFileChips();
         continue;
       }
@@ -366,11 +381,22 @@ async function handleFiles(fileList) {
     }
   }
   updateTrialBanner();
-  if (skipped) {
+  const ignoredMessage = invalidFiles.length
+    ? ` ${invalidFiles.length} non-PDF file${invalidFiles.length === 1 ? '' : 's'} ignored.`
+    : '';
+  if (duplicates && !skipped && !rows.length) {
+    showStatus(`That PDF is already selected.${ignoredMessage}`, 'info');
+  } else if (skipped) {
     renderFileChips();
-    showStatus(`${skipped} file${skipped === 1 ? '' : 's'} were skipped: daily limit of ${DAILY_LIMIT} reached`, 'info');
+    showStatus(`${skipped} file${skipped === 1 ? '' : 's'} were skipped: daily limit of ${DAILY_LIMIT} reached.${ignoredMessage}`, 'info');
   } else if (rows.length) {
-    showStatus(`Extracted ${rows.length} document${rows.length === 1 ? '' : 's'}.`, 'success');
+    const scannedMessage = noTextFound
+      ? ` ${noTextFound} scanned PDF${noTextFound === 1 ? '' : 's'} showed no text and was not added.`
+      : '';
+    const duplicateMessage = duplicates
+      ? ` ${duplicates} duplicate PDF${duplicates === 1 ? '' : 's'} already selected.`
+      : '';
+    showStatus(`Extracted ${rows.length} document${rows.length === 1 ? '' : 's'}.${scannedMessage}${duplicateMessage}${ignoredMessage}`, noTextFound ? 'warning' : 'success');
   }
   fileInput.value = '';
 }
@@ -436,7 +462,7 @@ document.querySelectorAll('[data-close-modal]').forEach((button) => button.addEv
 checkoutForm.addEventListener('submit', (event) => {
   event.preventDefault();
   const plan = $('checkoutTitle').textContent.replace(' plan', '');
-  if (!['Pro', 'Firm'].includes(plan)) return;
+  if (!['Pro', 'Yearly Pro', 'Firm'].includes(plan)) return;
   localStorage.setItem(STORAGE_KEYS.plan, plan);
   checkoutForm.hidden = true;
   $('checkoutSuccess').textContent = `You're now on the ${plan} plan. Unlimited documents are enabled.`;
