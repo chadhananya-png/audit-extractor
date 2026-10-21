@@ -23,7 +23,7 @@ const status = $('status');
 const trialCard = $('trialCard');
 const limitModal = $('limitModal');
 const checkoutModal = $('checkoutModal');
-const checkoutForm = $('checkoutForm');
+const checkoutMessage = $('checkoutMessage');
 
 const rows = [];
 let selectedFiles = [];
@@ -73,7 +73,7 @@ function updateTrialBanner() {
   const state = trialState();
   if (state.plan) {
     trialCard.classList.add('paid-plan');
-    $('trialTitle').textContent = `${state.plan} plan`;
+    $('trialTitle').textContent = 'Pro plan';
     $('trialDetail').textContent = 'Unlimited documents included';
     $('trialUpgradeBtn').hidden = true;
     return;
@@ -106,7 +106,7 @@ function openLimitModal(kind) {
     title.textContent = 'Your 10-day free trial has ended';
     content.innerHTML = '<p>Upgrade to keep extracting documents.</p><div class="plan-options"><div><strong>Monthly Pro</strong><span>$10/month, unlimited documents</span></div><div><strong>Yearly Pro</strong><span>$60/year ($5/month, billed yearly) · Save 50%</span></div><div><strong>Firm</strong><span>$99/month, team seats</span></div></div>';
   }
-  ['Pro', 'Firm'].forEach((plan) => {
+  ['Pro', 'Yearly Pro'].forEach((plan) => {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'btn btn-primary';
@@ -118,22 +118,77 @@ function openLimitModal(kind) {
 }
 
 function closeModals() {
+  const wasCheckoutOpen = !checkoutModal.hidden;
   limitModal.hidden = true;
   checkoutModal.hidden = true;
+  if (wasCheckoutOpen) showStatus('Checkout closed. No payment was taken and your plan was unchanged.', 'info');
 }
 
-function openCheckout(plan) {
+async function openCheckout(plan) {
+  const planKey = { Pro: 'monthly', 'Yearly Pro': 'yearly' }[plan];
+  if (!planKey) {
+    showStatus('That plan is not available in the test checkout.', 'info');
+    return;
+  }
   $('checkoutTitle').textContent = `${plan} plan`;
   const summaries = {
     Pro: '$10/month · Unlimited documents',
     'Yearly Pro': '$60/year ($5/month, billed yearly) · Unlimited documents',
-    Firm: '$99/month · Team seats',
   };
   $('checkoutSummary').textContent = summaries[plan] || '';
-  checkoutForm.hidden = false;
-  checkoutForm.reset();
+  checkoutMessage.textContent = 'Preparing secure checkout...';
   $('checkoutSuccess').hidden = true;
   checkoutModal.hidden = false;
+
+  try {
+    const orderResponse = await fetch('/api/create-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: planKey }),
+    });
+    const order = await orderResponse.json();
+    if (!orderResponse.ok) throw new Error(order.error || 'Could not start checkout.');
+    if (typeof window.Razorpay !== 'function') throw new Error('Razorpay Checkout could not be loaded.');
+
+    checkoutMessage.textContent = 'Complete the payment in the Razorpay window.';
+    const razorpay = new window.Razorpay({
+      key: order.keyId,
+      amount: order.amount,
+      currency: order.currency,
+      order_id: order.orderId,
+      name: 'Audit Extractor',
+      description: `${plan} plan`,
+      handler: async (payment) => {
+        try {
+          const verifyResponse = await fetch('/api/verify-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payment),
+          });
+          const verification = await verifyResponse.json();
+          if (!verifyResponse.ok || !verification.ok) throw new Error('Payment verification failed.');
+          localStorage.setItem(STORAGE_KEYS.plan, 'pro');
+          checkoutModal.hidden = true;
+          updateTrialBanner();
+          showView('tool');
+          showStatus('Payment verified. Pro is now enabled with unlimited documents.', 'success');
+        } catch (error) {
+          checkoutMessage.textContent = 'Payment could not be verified. No changes were made.';
+          showStatus(error.message, 'error');
+        }
+      },
+      modal: {
+        ondismiss: () => {
+          checkoutModal.hidden = true;
+          showStatus('Checkout closed. No payment was taken and your plan was unchanged.', 'info');
+        },
+      },
+    });
+    razorpay.open();
+  } catch (error) {
+    checkoutModal.hidden = true;
+    showStatus(`Checkout could not start: ${error.message}`, 'error');
+  }
 }
 
 function canUpload() {
@@ -464,17 +519,6 @@ fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 uploadDropzone.addEventListener('drop', (event) => handleFiles(event.dataTransfer.files));
 exportBtn.addEventListener('click', exportToExcel);
 document.querySelectorAll('[data-close-modal]').forEach((button) => button.addEventListener('click', closeModals));
-checkoutForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const plan = $('checkoutTitle').textContent.replace(' plan', '');
-  if (!['Pro', 'Yearly Pro', 'Firm'].includes(plan)) return;
-  localStorage.setItem(STORAGE_KEYS.plan, plan);
-  checkoutForm.hidden = true;
-  $('checkoutSuccess').textContent = `You're now on the ${plan} plan. Unlimited documents are enabled.`;
-  $('checkoutSuccess').hidden = false;
-  updateTrialBanner();
-  showView('tool');
-});
 $('trialUpgradeBtn').addEventListener('click', () => openCheckout('Pro'));
 $('resetDemoLink').addEventListener('click', (event) => {
   event.preventDefault();

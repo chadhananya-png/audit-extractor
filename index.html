@@ -7,6 +7,7 @@
     <title>Audit Extractor</title>
     <link rel="stylesheet" href="/styles.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path fill=%22%230d9488%22 d=%22M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6%22/></svg>">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -159,6 +160,7 @@
               <p class="eyebrow eyebrow-dark">Pricing</p>
               <h2 id="pricingHeading" class="section-title">Start small, scale with your workload</h2>
               <p class="section-subtitle">Choose the plan that fits the number of documents your team reviews.</p>
+              <p class="checkout-note">Test mode: no real payment is taken.</p>
             </div>
             <div class="pricing-grid">
               <article class="pricing-card">
@@ -245,14 +247,9 @@
     <div id="checkoutModal" class="modal-backdrop" hidden>
       <section class="modal-card checkout-card" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
         <button type="button" class="modal-close" data-close-modal aria-label="Close">&times;</button>
-        <p class="eyebrow eyebrow-dark">Demo checkout, no real payment is taken</p>
+        <p class="eyebrow eyebrow-dark">Test mode: no real payment is taken.</p>
         <h2 id="checkoutTitle" class="modal-title">Choose a plan</h2><p id="checkoutSummary" class="checkout-summary"></p>
-        <form id="checkoutForm" class="checkout-form">
-          <label>Name<input name="name" type="text" autocomplete="name" required></label>
-          <label>Card number<input name="cardNumber" type="text" inputmode="numeric" autocomplete="off" required></label>
-          <div class="checkout-row"><label>Expiry<input name="expiry" type="text" placeholder="MM/YY" autocomplete="off" required></label><label>CVC<input name="cvc" type="text" inputmode="numeric" autocomplete="off" required></label></div>
-          <button type="submit" class="btn btn-primary btn-block">Pay</button>
-        </form>
+        <p id="checkoutMessage" class="checkout-summary" aria-live="polite"></p>
         <p id="checkoutSuccess" class="checkout-success" hidden></p>
       </section>
     </div>
